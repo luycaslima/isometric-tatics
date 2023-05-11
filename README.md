@@ -20,6 +20,14 @@ Wins who defeat the adversary summoner. (Think of other condition of winning)
 
 The ideias listed here in the moment is just for the concept.
 
+- [ ] Game Manager
+  
+  - [ ] create application
+  
+  - [ ] manage change of scenes
+  
+  - [ ] 
+
 - [ ] Maps
   
   - [x] Create basic isometric tilemap
@@ -57,9 +65,11 @@ The ideias listed here in the moment is just for the concept.
   
   - [ ] Actions
   
+  - [ ] Description box
+  
   - [ ] Character Status
   
-  - [ ] minimap?
+  - [ ] Minimap?
   
   - [ ] Main Menu
   

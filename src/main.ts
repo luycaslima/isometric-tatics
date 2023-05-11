@@ -1,4 +1,3 @@
-//import InputManager from './core/InputManager';
 import { SPRITESIZE, Tile } from './map/Tiles';
 import './style.css'
 import Stats from 'stats.js';
@@ -14,7 +13,6 @@ stats.showPanel(0);
 document.body.appendChild(stats.dom);
 
 //INITIALIZATION
-
 const app: Application = new Application ({
   view: document.getElementById('pixi-canvas') as HTMLCanvasElement,
   resolution: window.devicePixelRatio || 1, //?
@@ -58,9 +56,7 @@ for (let x = 0; x < 32; x++) {
 app.stage.addChild(tileMap);
 
 
-//CAMERA - Make a class? or interface?
-// Camera zoom?
-app.stage.scale.set(2);
+
 //Call this only when the camera move
 const checkVisibleEntities = function () {
   //Para derenderizar os elementos na tela ( Porém se eu mandar desrenderizar o tilemap ele vai fz com os filhos)
@@ -75,9 +71,10 @@ const checkVisibleEntities = function () {
   }
 }
 
-
-//CAMERA
+//CAMERA - Make a class? or interface?
 let cameraPos: Point = new Point(0, 0);
+// Camera zoom
+app.stage.scale.set(2);
 
 function cameraInput(delta: number) {
   if (InputManager.state.get('ArrowRight')) {

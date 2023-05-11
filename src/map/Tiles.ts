@@ -9,14 +9,6 @@ const j_y = 0.5;
 
 //Constante por enquanto, futuro ser capaz de editar
 export const SPRITESIZE = {w:48,h:48} as const;
-/*
-export type Tile = {
-    gridPosition: Vector2;
-    isoPosition: Vector2;
-    sprite: Sprite;
-    neighbors: Array<[Tile | undefined, Tile | undefined,Tile | undefined, Tile | undefined]>; // Array de vizinhos do bloco(4)q pode ter ou nao
-}
-*/
 
 //Converte grid position to  isometric position
 export function toScreenCoordinates(gridPosition: Point): Point {
@@ -53,8 +45,6 @@ export class Tile extends Container {
         const pos: Vector2 = this.getTileCentralPosition();
         pivot.x = pos.x;
         pivot.y = pos.y;*/
-
-        //pivot.anchor.set(-1,-0.25);
 
         this.position.x = this.isoPosition.x;
         this.position.y = this.isoPosition.y;
