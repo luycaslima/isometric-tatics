@@ -24,7 +24,7 @@ export function toScreenCoordinates(gridPosition: Point): Point {
     //Multiply by halfbecause of the offset of 0 on the canvas
     return {
         x: gridPosition.x * i_x * 0.5 * SPRITESIZE.w + gridPosition.y * j_x * 0.5 * SPRITESIZE.w,
-        y: gridPosition.x * i_y * 0.5 * SPRITESIZE.h + gridPosition.y * j_y *  0.5   * SPRITESIZE.h
+        y: gridPosition.x * i_y * 0.5 * SPRITESIZE.h + gridPosition.y * j_y *  0.5 * SPRITESIZE.h
     } as Point;
 }
 
@@ -45,7 +45,7 @@ export class Tile extends Container {
         this.sprite = new Sprite(texture);
         this.isoPosition = toScreenCoordinates(gridPosition);
         
-        //this.sprite.
+
         //this.sprite.anchor.set(0.5);
         
         /*const pivot : Sprite = Sprite.from('/tiles/pivot.png')

@@ -26,17 +26,20 @@ The ideias listed here in the moment is just for the concept.
   
   - [ ] Map editor (for development ? or use Tiled?)
 
-- [ ] Scale game base on window size
+- [ ] Render
   
   - [x] pixel perfect 
+  - [ ] scale based on window
 
 - [ ] A* path algorithm
 
 - [ ] Camera
   
-  - [ ] render only the visibile entities 
+  - [x] render only the visibile entities 
   
-  - [ ] movement 
+  - [x] movement (debug mode on arrows)
+    
+    - [ ] movement in target entity
 
 - [ ] Player
   
@@ -50,7 +53,7 @@ The ideias listed here in the moment is just for the concept.
   
   - [ ] Input
 
-- [ ] UI
+- [ ] UI ( HTML or CANVAS?)
   
   - [ ] Actions
   
