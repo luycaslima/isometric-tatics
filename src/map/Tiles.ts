@@ -92,7 +92,7 @@ export class Tile extends Container {
 
 
     //Refatorar pois o centro n é exatamente o centro do bloco e sim acima dele
-    getTileCentralPosition(): Point {
+    public getTileCentralPosition(): Point {
         return {x:(SPRITESIZE.w /2) + this.position.x , y:(SPRITESIZE.h /4) + this.position.y } as Point;
     }
 
