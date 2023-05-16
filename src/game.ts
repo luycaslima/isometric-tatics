@@ -1,23 +1,20 @@
-
-import { Application, DisplayObject } from "pixi.js";
-
-//Load Content
-//Initiante
+import { Application, BaseTexture, DisplayObject, SCALE_MODES } from "pixi.js";
+import InputManager from "./core/InputManager";
+// Load Content(separate)
+//Initiate
 //Update(Loop)
-    //Process Inpit
-    //Update
-    //Render
 
 
 //Initialize, resize window and change scenes
 export class Game {
-    constructor(){} //used as static
+    constructor(){} 
 
     private static app: Application;
     private static currentScene: IScene; 
 
     private static _width: number;
     private static _height: number;
+
 
     public static get width(): number{
         return Game._width;
@@ -27,6 +24,11 @@ export class Game {
         return Game._height;
     }
     
+    public static setCameraPosition(x: number, y: number): void { 
+        Game.app.stage.pivot.x = x;
+        Game.app.stage.pivot.y = y;
+    }
+
 
     public static initialize(width : number, height : number, backgroundColor : number) : void {
         Game._width = width;
@@ -40,6 +42,15 @@ export class Game {
             width: width,
             height: height
         });
+        
+        InputManager.initialize();
+
+        //Pixel art style
+        BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST;
+        
+        
+        //TODO Set scale with the RESIZE OF THE CANVAS
+        Game.app.stage.scale.set(2);
 
         //Add ticker
         Game.app.ticker.add(Game.update);
@@ -55,7 +66,7 @@ export class Game {
         Game.app.stage.addChild(newScene);
     }
 
-    public static update(delta: number) : void {
+    private static update(delta: number): void {
         if (Game.currentScene) {
             Game.currentScene.update(delta);
         }

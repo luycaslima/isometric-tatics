@@ -20,60 +20,87 @@ Wins who defeat the adversary summoner. (Think of other condition of winning)
 
 The ideias listed here in the moment is just for the concept.
 
+**PRIORITY** : Insert two entities in a map and control each through socket io 
+
+- [x] Create BASIC Unit/ Summoner class (Sprite, container)
+
+- [ ] Implement the A* algorithm
+
+- [ ] Implement Socket io for the connection
+
+---
+
 - [ ] Game Manager
   
-  - [ ] create application
+  - [x] create application
   
-  - [ ] manage change of scenes
+  - [x] manage change of scenes
   
-  - [ ] 
+  - [x] update current scene
+  
+  - [x] Refactor the initialization from main.ts to the game class
 
 - [ ] Maps
   
-  - [x] Create basic isometric tilemap
+  - [x] Tile class
+    
+    - [x] Create basic isometric tilemap
   
-  - [ ] Map editor (for development ? or use Tiled?)
+  - [x] MapScene class
+  
+  - [ ] Map editor (for development in canvas ? or use Tiled?)
+    
+    - [ ] export in json
+    - [ ] use [lil-gui 0.18.1](https://lil-gui.georgealways.com/#Guide#Adding-Controllers) for the editor?
 
 - [ ] Render
   
   - [x] pixel perfect 
   - [ ] scale based on window
+    - [ ] Give a max size or full document screen?
+    - [ ] Maintain the proportion to screen
 
-- [ ] A* path algorithm
+- [ ] A* path algorithm used by the BattleManager
 
 - [ ] Camera
   
-  - [x] render only the visibile entities 
+  - [x] render only the visibile entities ( On map scene class)
   
-  - [x] movement (debug mode on arrows)
+  - [ ] movement
     
-    - [ ] movement in target entity
+    - [ ] move to target entity
+    - [x] (debug mode on arrows)
 
-- [ ] Player
+- [ ] Player Units
   
-  - [ ] Summoner
+  - [ ] Summoner / Monster Units
     
     - [ ] Status
+    - [x] Basic Unit Class
+      - [x] Summoner Class
+      - [ ] Monster Class
   
   - [ ] actions / states
   
   - [ ] animations
-  
-  - [ ] Input
 
-- [ ] UI ( HTML or CANVAS?)
+- [ ] Proper assets loading
+
+- [ ] UI Manager ( HTML or CANVAS?)
   
-  - [ ] Actions
+  - [ ] Actions (Atack, Move, Magic, Wait)
   
-  - [ ] Description box
+  - [ ] Description box (Skills,etc)
   
-  - [ ] Character Status
+  - [ ] Skill list
+  
+  - [ ] Character Status (Sprite, lvl, hp,mp, strength, speed etc)
   
   - [ ] Minimap?
   
   - [ ] Main Menu
   
-  - [ ] Room
+  - [ ] Online Room
     
     - [ ] Map selector
     
@@ -83,8 +110,11 @@ The ideias listed here in the moment is just for the concept.
   
   - [ ] Turns
   
+  - [ ] Battle States
+  
   - [ ] Victory/Defeat Conditions
 
 - [ ] Multiplayer
   
-  - [ ] Socket.IO
+  - [ ] Use Socket.IO
+  - [ ] Rooms
