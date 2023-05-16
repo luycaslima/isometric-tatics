@@ -16,7 +16,6 @@ interface IStatus{
     lvl: number;
     hp: number;
     mp: number;
-    exp: number;
     //dealDamage(): void;
     //takeDamage(): void;
 }
@@ -36,6 +35,7 @@ class Unit extends Container implements IScene{
     //stats: IStatus;
     // _currentHp: number = this._hp;
     // _currentMp: number = this._mp;
+    // _currentexp: number = this._exp;
 
     constructor(pos : Point,textureSheet : Texture) {
         super()
@@ -47,7 +47,6 @@ class Unit extends Container implements IScene{
         
         this.position.x = pos.x;
         this.position.y = pos.y;
-
         
         this.addChild(this.sprite);
     }
@@ -65,6 +64,7 @@ export class Summoner extends Unit implements ISumonnerActions{
 
 }
 
-export class Monster extends Unit{
-
+export class Monster extends Unit {
+    //private _exp: number = 0;
+    //private _currentExp: number = 0;
 }

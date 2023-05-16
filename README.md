@@ -23,6 +23,8 @@ The ideias listed here in the moment is just for the concept.
 **PRIORITY** : Insert two entities in a map and control each through socket io 
 
 - [x] Create BASIC Unit/ Summoner class (Sprite, container)
+  
+  - [x] Spawn on the map scene
 
 - [ ] Implement the A* algorithm
 
@@ -48,7 +50,7 @@ The ideias listed here in the moment is just for the concept.
   
   - [x] MapScene class
   
-  - [ ] Map editor (for development in canvas ? or use Tiled?)
+  - [ ] Map editor (for development in canvas ? or use Tiled and export CSV?)
     
     - [ ] export in json
     - [ ] use [lil-gui 0.18.1](https://lil-gui.georgealways.com/#Guide#Adding-Controllers) for the editor?

@@ -1,7 +1,7 @@
 import { Container, Point, Sprite, Texture } from "pixi.js";
 import { IScene } from "../game";
 
-// These are the four numbers that define the transform, i hat and j hat
+// These are the four numbers that define the transform to isometric direction, i hat and j hat
 const i_x = 1;
 const i_y = 0.5;
 const j_x = -1;
@@ -26,6 +26,54 @@ export class Tile extends Container implements IScene{
     private gridPosition: Point;
     private isoPosition: Point;
     
+    //A* pathfinding
+    private _h: number = 0;
+    private _g: number = 0;
+    private _f: number = this._h + this._g;
+    private _isWalkable: boolean = false;
+    
+    private connection?: Tile; //Tile with the shortest path to the goal 
+
+    // Array of neighbors tiles (the tile can have max 4) no diagonal movement
+    private neighbors?: Array<[Tile | undefined, Tile | undefined,Tile | undefined, Tile | undefined]>; //Up, left, down, right
+
+    //Has to have undefined because the connection is nullable 
+    public get getConnection(): Tile | undefined {
+        return this.connection;
+    }
+    public set setConnection(tile: Tile) {
+        this.connection = tile;
+    }
+
+    public get G(): number {
+        return this._g;
+    }
+    public set setG(value: number) {
+        this._g = value;
+    }
+
+    public get H(): number {
+        return this._h;
+    }
+    public set setH(value: number) {
+        this._h = value;
+    }
+
+    public get F(): number {
+        //this._f = this._g + this._h;
+        return this._f;
+    }
+
+    public get isWalkable(): boolean{
+        return this._isWalkable;
+    }
+    public set isWalkable(value: boolean){
+        this._isWalkable = value;
+    }
+
+    public cacheNeighbors(): void {
+        
+    }
 
     constructor(gridPosition: Point, texture: Texture) {
         super();
@@ -66,7 +114,10 @@ export class Tile extends Container implements IScene{
         this.sprite.y = this.sprite.y + 8;
     }
 */
-
+    /*private get getGridPosition(): Point {
+        return this.gridPosition;
+    }*/
+    
     private getGridPosition() {
         //fazer uma chamada a classe estatica q recbe todos os tiles de leitura pra avisar q foi ESSE que foi clicado
         console.log(`${this.gridPosition.x}  ${this.gridPosition.y}`);

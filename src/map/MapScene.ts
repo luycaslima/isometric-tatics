@@ -37,15 +37,14 @@ export class MapScene extends Container implements IScene{
         
         
         this.cameraPos = new Point(0, 0);
-        
+
+
         //TODO  LOAD THE STRUCTURE THROUGH A FILE - THIS IS JUST A DEBUG MAP 
         const tileTexture: Texture = Texture.from('/tiles/block.png');
-
         this.x = Game.width / 4;
         this.y = 0;
 
-        //TODO Save reference of tiles in the battle manager or give acess here?
-
+        //TODO Save reference of tiles in the battle manager or give access here?
         for (let x = 0; x < 32; x++) {
             for (let y = 0; y < 32; y++) {
                 const tile: Tile = new Tile(new Point(x, y), tileTexture)
@@ -83,7 +82,6 @@ export class MapScene extends Container implements IScene{
 
 
         this.cameraInput(delta);
-
         this.camera.update(delta);
         //TODO store the units(Monster and summoners) separately of the tiles to update here (check if in the future the tiles need to update too) 
         this.checkVisibleEntities();
