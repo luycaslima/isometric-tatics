@@ -1,5 +1,5 @@
 import { Container, Point, Sprite, Texture } from "pixi.js";
-import { IScene } from "../game";
+import { IScene } from "../core/Interfaces";
 
 /*
 const ELEMENTS = {

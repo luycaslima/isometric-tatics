@@ -1,8 +1,7 @@
-import { Application, BaseTexture, DisplayObject, SCALE_MODES } from "pixi.js";
+import { Application, BaseTexture, SCALE_MODES } from "pixi.js";
 import InputManager from "./core/InputManager";
-// Load Content(separate)
-//Initiate
-//Update(Loop)
+import { IScene } from "./core/Interfaces";
+import { SceneLoader } from "./core/SceneLoader";
 
 
 //Initialize, resize window and change scenes
@@ -52,6 +51,10 @@ export class Game {
         //TODO Set scale with the RESIZE OF THE CANVAS
         Game.app.stage.scale.set(2);
 
+        //TODO debuging Loading Scene
+        const loader: SceneLoader = new SceneLoader(this._width,this._height);
+        Game.app.stage.addChild(loader);
+
         //Add ticker
         Game.app.ticker.add(Game.update);
     }
@@ -72,10 +75,5 @@ export class Game {
         }
     }
 
-}
-
-
-export interface IScene extends DisplayObject{
-    update(delta: number): void;
 }
 

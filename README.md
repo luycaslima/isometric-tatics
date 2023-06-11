@@ -26,6 +26,8 @@ The ideias listed here in the moment is just for the concept.
   
   - [x] Spawn on the map scene
 
+- [x] Create my own tilemap editor
+
 - [ ] Implement the A* algorithm
 
 - [ ] Implement Socket io for the connection
@@ -42,7 +44,7 @@ The ideias listed here in the moment is just for the concept.
   
   - [x] Refactor the initialization from main.ts to the game class
 
-- [ ] Maps
+- [ ] Map Scene
   
   - [x] Tile class
     
@@ -50,10 +52,9 @@ The ideias listed here in the moment is just for the concept.
   
   - [x] MapScene class
   
-  - [ ] Map editor (for development in canvas ? or use Tiled and export CSV?)
-    
-    - [ ] export in json
-    - [ ] use [lil-gui 0.18.1](https://lil-gui.georgealways.com/#Guide#Adding-Controllers) for the editor?
+  - [x] Map Editor (export in JSON)
+  
+  - [ ] Load and create instance of map from JSON file
 
 - [ ] Render
   
@@ -86,9 +87,11 @@ The ideias listed here in the moment is just for the concept.
   
   - [ ] animations
 
-- [ ] Proper assets loading
+- [ ] Assets loading
+  
+  - [x] Basic Map*(JSON) and Image loading
 
-- [ ] UI Manager ( HTML or CANVAS?)
+- [ ] UI Manager ( HTML or pixi UI ?)
   
   - [ ] Actions (Atack, Move, Magic, Wait)
   

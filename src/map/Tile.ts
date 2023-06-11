@@ -1,24 +1,17 @@
 import { Container, Point, Sprite, Texture } from "pixi.js";
-import { IScene } from "../game";
+import { IScene, SpriteSize, Vector3 } from "../core/Interfaces";
 
-// These are the four numbers that define the transform to isometric direction, i hat and j hat
-const i_x = 1;
-const i_y = 0.5;
-const j_x = -1;
-const j_y = 0.5;
 
 //Constante por enquanto, futuro ser capaz de editar
 export const SPRITESIZE = {w:48,h:48} as const;
 
-//Converte grid position to  isometric position
-export function toScreenCoordinates(gridPosition: Point): Point {
-    //Multiply by halfbecause of the offset of 0 on the canvas
+//Convert grid position to  isometric position
+export function toScreenCoordinates(gridPosition: Point, spriteSize : SpriteSize): Point {
     return {
-        x: gridPosition.x * i_x * 0.5 * SPRITESIZE.w + gridPosition.y * j_x * 0.5 * SPRITESIZE.w,
-        y: gridPosition.x * i_y * 0.5 * SPRITESIZE.h + gridPosition.y * j_y *  0.5 * SPRITESIZE.h
+        x: (gridPosition.x * spriteSize.w / 2  - gridPosition.y  * spriteSize.w /2) - (spriteSize.w/2),
+        y: gridPosition.x *  spriteSize.h / 4  + gridPosition.y  * spriteSize.h /4 - (spriteSize.h/2) 
     } as Point;
 }
-
 
 export class Tile extends Container implements IScene{
     private sprite: Sprite;
@@ -35,7 +28,7 @@ export class Tile extends Container implements IScene{
     private connection?: Tile; //Tile with the shortest path to the goal 
 
     // Array of neighbors tiles (the tile can have max 4) no diagonal movement
-    private neighbors?: Array<[Tile | undefined, Tile | undefined,Tile | undefined, Tile | undefined]>; //Up, left, down, right
+    private neighbors?: Array<[Vector3 | undefined, Vector3 | undefined, Vector3 | undefined, Vector3 | undefined]>; //Up, left, down, right
 
     //Has to have undefined because the connection is nullable 
     public get getConnection(): Tile | undefined {
@@ -80,7 +73,7 @@ export class Tile extends Container implements IScene{
 
         this.gridPosition = gridPosition;
         this.sprite = new Sprite(texture);
-        this.isoPosition = toScreenCoordinates(gridPosition);
+        this.isoPosition = toScreenCoordinates(gridPosition, SPRITESIZE as SpriteSize);
         
         /*const pivot : Sprite = Sprite.from('/tiles/pivot.png')
         pivot.anchor.set(0.5);
