@@ -1,11 +1,9 @@
 import './style.css'
 import { Game } from './game';
-import { MapScene } from './map/MapScene';
+import { SceneLoader } from './core/SceneLoader';
 
 
-Game.initialize(1600, 900, 0x6495ed);
+Game.initialize(640, 360, 0x6495ed);
 
-/*
-const map: MapScene = new MapScene();
-Game.changeScene(map);
-*/
+const loader: SceneLoader = new SceneLoader();
+Game.changeScene(loader);

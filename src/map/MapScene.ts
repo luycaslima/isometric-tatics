@@ -1,12 +1,12 @@
-import { Assets, BaseTexture, Container, DisplayObject, Point, Texture } from "pixi.js";
+import { BaseTexture, Container, DisplayObject, Point, Rectangle, Texture } from "pixi.js";
 import { Game } from "../game";
-import { SPRITESIZE, Tile } from "./Tile";
+import { Tile } from "./Tile";
 import '@pixi/math-extras';
 import Stats from "stats.js";
 import InputManager from "../core/InputManager";
 import { Camera } from "./Camera";
 import { Summoner } from "../entities/Unit";
-import { IScene, ITilemap } from "../core/Interfaces";
+import { ILayer, IScene, ITile, ITilemap, SpriteSize } from "../core/Interfaces";
 
 
 /**
@@ -17,49 +17,48 @@ import { IScene, ITilemap } from "../core/Interfaces";
 
 export class MapScene extends Container implements IScene/*, ITilemap*/{
 
+    tilesetName: string;
+    mapSize: [number, number];
+    tileSize: SpriteSize;
+    //layers: ILayer[];
+
     private baseTexture: BaseTexture;
     
     private cameraPos: Point;
     private camera: Camera; 
     
     //Tiles
-    //ao ser construido passar pro battle manager seus tiles para ser calculado seus vizinhos
+    //ao ser construido passar pro battle manager 
     private tiles: Map<string,Tile> = new Map();
     
     // STATS FOR PERFOMANCE DEBUGING   
     private stats: Stats = new Stats();
     
-    constructor() {
+    constructor(tilemap: ITilemap) {
         //TODO pass the loaded assets here the json, and the name of the map
-        super(); 
+        super();
 
         this.camera = new Camera();
-
+        //For debug
         this.stats = new Stats();
         this.stats.showPanel(0);
         document.body.appendChild(this.stats.dom);
         
         
         this.cameraPos = new Point(0, 0);
-        this.baseTexture = BaseTexture.from('tilemap');
+        this.tilesetName = tilemap.tilesetName;
+        this.mapSize = tilemap.mapSize;
+        this.tileSize = { w: tilemap.tileSize[0], h: tilemap.tileSize[1] } as SpriteSize;
+
+        this.baseTexture = BaseTexture.from(`${tilemap.tilesetName}`);
         
-        //console.log(Assets.get("tilemapData") as ITilemap);
+        //TODO understand the origin to always center
+        this.x = Game.rendererWidth / 6;
+        this.y = -Game.rendererHeight / 6;
+        
+        this.generateMap(tilemap);
 
-        //TODO  LOAD THE STRUCTURE THROUGH A FILE - THIS IS JUST A DEBUG MAP 
-        const tileTexture: Texture = Texture.from('./tiles/block.png');
-
-        this.x = Game.width / 4;
-        this.y = 0;
-
-        for (let x = 0; x < 32; x++) {
-            for (let y = 0; y < 32; y++) {
-                const tile: Tile = new Tile(new Point(x, y), tileTexture)
-                this.addChild(tile);
-                this.tiles.set(`${x},${y}`,tile);
-            }
-        }
-
-        const tile = this.tiles.get("0,0");
+        const tile = this.tiles.get("13,11");
         //TODO For debug Spawn Summoner Spawn in the correct position in each map.  
         const texture: Texture = Texture.from('/sprites/placeholder_nonanimated.png');
         const summoner: Summoner = new Summoner(tile!.getTileCentralPosition(), texture);
@@ -67,6 +66,7 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
 
         this.addChild(summoner);
     }
+
     
     //TODO  MOVE TO THE CAMERA CLASS AND MOVE ONLY TROUGHT TARGET POSITION (OR STORE HERE THESE FUNCTIONS?)
     private cameraInput(delta: number) {
@@ -84,7 +84,7 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
         Game.setCameraPosition(this.cameraPos.x, this.cameraPos.y);
     }
       
-    public update(delta: number) {
+    public update(delta: number) : void {
         this.stats.begin()
 
         this.cameraInput(delta);
@@ -96,15 +96,32 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
     }
 
 
-    private checkVisibleEntities() {
+    private checkVisibleEntities() :void {
         if (this.children) {
             for (const c in this.children) {
                 
                 const child : DisplayObject = this.children[c];
                 const pos = child.toGlobal(new Point(0, 0));
-                child.renderable = (pos.x > 0 - SPRITESIZE.w * 2 && pos.y > 0 - SPRITESIZE.h *2 && pos.x < Game.width + SPRITESIZE.w
-                                    && pos.y < Game.heigth + SPRITESIZE.h);
+                child.renderable = (pos.x > 0 - this.tileSize.w * 2 && pos.y > 0 - this.tileSize.h * 2 && pos.x < Game.rendererWidth + this.tileSize.w
+                                    && pos.y < Game.rendererHeight + this.tileSize.h);
             }
         }
+    }
+
+    private generateMap(tilemap: ITilemap): void {
+        //Treat the other layers and data
+        for (let x = 0; x < tilemap.layers[1].createdTiles!.length ; x++) { 
+            const tileData = tilemap.layers[1].createdTiles![x] as ITile;
+            
+            const rect = new Rectangle(tileData.tilesetTile[0], tileData.tilesetTile[1],
+                tilemap.tileSize[0], tilemap.tileSize[1]);
+            const texture = new Texture(this.baseTexture, rect);
+            
+            const tile = new Tile(tileData, texture, tilemap.tileSize);
+                
+            this.tiles.set(`${tileData.gridPosition.x},${tileData.gridPosition.y}`, tile);
+            this.addChild(tile);
+        }
+        this.sortChildren();
     }
 }

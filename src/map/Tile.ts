@@ -1,24 +1,19 @@
 import { Container, Point, Sprite, Texture } from "pixi.js";
-import { IScene, SpriteSize, Vector3 } from "../core/Interfaces";
+import { IScene, ITile, SpriteSize, TileType, Vector3 } from "../core/Interfaces";
 
 
-//Constante por enquanto, futuro ser capaz de editar
-export const SPRITESIZE = {w:48,h:48} as const;
-
-//Convert grid position to  isometric position
-export function toScreenCoordinates(gridPosition: Point, spriteSize : SpriteSize): Point {
-    return {
-        x: (gridPosition.x * spriteSize.w / 2  - gridPosition.y  * spriteSize.w /2) - (spriteSize.w/2),
-        y: gridPosition.x *  spriteSize.h / 4  + gridPosition.y  * spriteSize.h /4 - (spriteSize.h/2) 
-    } as Point;
-}
-
-export class Tile extends Container implements IScene{
-    private sprite: Sprite;
-
-    private gridPosition: Point;
-    private isoPosition: Point;
+export class Tile extends Container implements IScene, ITile{
+    tilesetTile: [number, number];
+    depth: number;
+    tileType: TileType; 
     
+    gridPosition: Vector3;
+    isoPosition: Point;
+
+    private sprite: Sprite;
+    private tileSize: SpriteSize;
+
+
     //A* pathfinding
     private _h: number = 0;
     private _g: number = 0;
@@ -26,9 +21,8 @@ export class Tile extends Container implements IScene{
     private _isWalkable: boolean = false;
     
     private connection?: Tile; //Tile with the shortest path to the goal 
-
     // Array of neighbors tiles (the tile can have max 4) no diagonal movement
-    private neighbors?: Array<[Vector3 | undefined, Vector3 | undefined, Vector3 | undefined, Vector3 | undefined]>; //Up, left, down, right
+    neighbours: [Vector3 | undefined, Vector3 | undefined, Vector3 | undefined, Vector3 | undefined]; //Up, left, down, right
 
     //Has to have undefined because the connection is nullable 
     public get getConnection(): Tile | undefined {
@@ -38,22 +32,22 @@ export class Tile extends Container implements IScene{
         this.connection = tile;
     }
 
-    public get G(): number {
+    public get g(): number {
         return this._g;
     }
     public set setG(value: number) {
         this._g = value;
     }
 
-    public get H(): number {
+    public get h(): number {
         return this._h;
     }
     public set setH(value: number) {
         this._h = value;
     }
 
-    public get F(): number {
-        //this._f = this._g + this._h;
+    public get f(): number {
+        this._f = this._g + this._h;
         return this._f;
     }
 
@@ -64,22 +58,25 @@ export class Tile extends Container implements IScene{
         this._isWalkable = value;
     }
 
-    public cacheNeighbors(): void {
-        
-    }
-
-    constructor(gridPosition: Point, texture: Texture) {
+    constructor( tileData : ITile, texture: Texture, tileSize : [number,number]) {
         super();
 
-        this.gridPosition = gridPosition;
-        this.sprite = new Sprite(texture);
-        this.isoPosition = toScreenCoordinates(gridPosition, SPRITESIZE as SpriteSize);
+        this.gridPosition = tileData.gridPosition;
         
-        /*const pivot : Sprite = Sprite.from('/tiles/pivot.png')
-        pivot.anchor.set(0.5);
-        const pos: Vector2 = this.getTileCentralPosition();
-        pivot.x = pos.x;
-        pivot.y = pos.y;*/
+        this.sprite = new Sprite(texture);
+        this.isoPosition = new Point(tileData.isoPosition.x, tileData.isoPosition.y);
+        this.neighbours = tileData.neighbours;
+
+        this.depth = tileData.depth;
+        this.zIndex = this.depth;
+
+        this.tileSize = { w: tileSize[0], h: tileSize[1] } as SpriteSize;
+
+        //Not useful here anymore
+        this.tilesetTile = tileData.tilesetTile;
+        //Not useful in the moment
+        this.tileType = tileData.tileType;
+    
 
         this.position.x = this.isoPosition.x;
         this.position.y = this.isoPosition.y;
@@ -94,7 +91,6 @@ export class Tile extends Container implements IScene{
         //this.sprite.onmouseout = this.outTile.bind(this);
 
         this.addChild(this.sprite);
-        //this.addChild(pivot);
     }
 
 
@@ -107,13 +103,10 @@ export class Tile extends Container implements IScene{
         this.sprite.y = this.sprite.y + 8;
     }
 */
-    /*private get getGridPosition(): Point {
-        return this.gridPosition;
-    }*/
-    
+
     private getGridPosition() {
-        //fazer uma chamada a classe estatica q recbe todos os tiles de leitura pra avisar q foi ESSE que foi clicado
-        console.log(`${this.gridPosition.x}  ${this.gridPosition.y}`);
+        //TODO make a static class that call the function with the data that I pass herer
+        console.log(`x: ${this.gridPosition.x}, y: ${this.gridPosition.y},z: ${this.gridPosition.z}`);
         //return this.gridPosition;
     }
 
@@ -123,7 +116,7 @@ export class Tile extends Container implements IScene{
 
     //Return the top center of the sprite where the unit will stay
     public getTileCentralPosition(): Point {
-        return {x:(SPRITESIZE.w /2) + this.position.x , y:(SPRITESIZE.h /2.5) + this.position.y } as Point;
+        return {x:(this.tileSize.w /2) + this.position.x , y:(this.tileSize.h /2.5) + this.position.y } as Point;
     }
 
 

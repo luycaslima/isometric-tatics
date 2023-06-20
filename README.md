@@ -54,14 +54,14 @@ The ideias listed here in the moment is just for the concept.
   
   - [x] Map Editor (export in JSON)
   
-  - [ ] Load and create instance of map from JSON file
+  - [x] Load and create instance of map from JSON file
 
 - [ ] Render
   
   - [x] pixel perfect 
-  - [ ] scale based on window
+  - [x] scale based on window
     - [ ] Give a max size or full document screen?
-    - [ ] Maintain the proportion to screen
+    - [x] Maintain the proportion to screen
 
 - [ ] A* path algorithm used by the BattleManager
 
@@ -72,6 +72,8 @@ The ideias listed here in the moment is just for the concept.
   - [ ] movement
     
     - [ ] move to target entity
+    - [ ] mouse Zoom in/out
+    - [ ] Mouse Drag
     - [x] (debug mode on arrows)
 
 - [ ] Player Units
@@ -123,3 +125,4 @@ The ideias listed here in the moment is just for the concept.
   
   - [ ] Use Socket.IO
   - [ ] Rooms
+  - [ ] Hosting ( Render, Pie socket?)

@@ -6,19 +6,24 @@ import type { ResolverManifest } from "pixi.js";
 
 //Separate the bundle in maps, characters and audio?
 //or only in map(the music, sprite and tiles) and units
-export const manifest : ResolverManifest = {
-    bundles:[
+export const manifest: ResolverManifest = {
+    bundles: [
         {
-            name: 'Map',
+            name: 'Maps',
             assets: [
                 {
-                    name: "tilemap",
-                    srcs: "tiles/isometric_tiles.png",
-                },
-                {
-                    name: "tilemapData",
+                    name: "mGrassField",
                     srcs: "maps/m_grassField.json"
                 }
+            ]
+        },
+        {
+            name: 'Tilesets',
+            assets: [
+                {
+                    name: "isometric_tiles.png",
+                    srcs: "tiles/isometric_tiles.png",
+                },
             ]
         }
     ]
