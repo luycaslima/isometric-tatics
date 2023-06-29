@@ -1,5 +1,5 @@
 import { Application, BaseTexture, SCALE_MODES,settings } from "pixi.js";
-import InputManager from "./core/InputManager";
+import Input from "./core/InputManager";
 import { IScene } from "./core/Interfaces";
 
 
@@ -41,12 +41,12 @@ export class Game {
             width: width,
             height: height
         });
-        settings.ROUND_PIXELS = true; //sharper imgs but movement can appear less smooth 
         
-        InputManager.initialize();
-
+        Input.initialize();
+        
         //Pixel art style
         BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST;
+        settings.ROUND_PIXELS = true; //sharper imgs but movement can appear less smooth 
 
         //TODO Set scale with the RESIZE OF THE CANVAS
         //Game.app.stage.scale.set(2);
@@ -85,7 +85,7 @@ export class Game {
 
     private static update(delta: number): void {
         if (Game.currentScene) {
-            Game.currentScene.update(delta);
+            Game.currentScene.update(Game.app.ticker.elapsedMS  /1000);
         }
     }
 

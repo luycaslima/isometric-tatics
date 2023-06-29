@@ -3,10 +3,11 @@ import { Game } from "../game";
 import { Tile } from "./Tile";
 import '@pixi/math-extras';
 import Stats from "stats.js";
-import InputManager from "../core/InputManager";
+import Input from "../core/InputManager";
 import { Camera } from "./Camera";
 import { Summoner } from "../entities/Unit";
-import { ILayer, IScene, ITile, ITilemap, SpriteSize } from "../core/Interfaces";
+import { IScene, ITile, ITilemap, SpriteSize } from "../core/Interfaces";
+import { Battle,BATTLESTATES } from "../core/Battle";
 
 
 /**
@@ -27,6 +28,10 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
     private cameraPos: Point;
     private camera: Camera; 
     
+    //TODO Ter uma lista de unidades de cada player
+    private summoner: Summoner;
+
+
     //Tiles
     //ao ser construido passar pro battle manager 
     private tiles: Map<string,Tile> = new Map();
@@ -34,9 +39,12 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
     // STATS FOR PERFOMANCE DEBUGING   
     private stats: Stats = new Stats();
     
+    public get getSummoner(): Summoner { return this.summoner; }
+    public get getTiles(): Map<string, Tile> { return this.tiles; }
+
     constructor(tilemap: ITilemap) {
-        //TODO pass the loaded assets here the json, and the name of the map
         super();
+        
 
         this.camera = new Camera();
         //For debug
@@ -44,8 +52,9 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
         this.stats.showPanel(0);
         document.body.appendChild(this.stats.dom);
         
-        
         this.cameraPos = new Point(0, 0);
+        
+        //Load map
         this.tilesetName = tilemap.tilesetName;
         this.mapSize = tilemap.mapSize;
         this.tileSize = { w: tilemap.tileSize[0], h: tilemap.tileSize[1] } as SpriteSize;
@@ -61,40 +70,32 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
         const tile = this.tiles.get("13,11");
         //TODO For debug Spawn Summoner Spawn in the correct position in each map.  
         const texture: Texture = Texture.from('/sprites/placeholder_nonanimated.png');
-        const summoner: Summoner = new Summoner(tile!.getTileCentralPosition(), texture);
-        summoner.position = tile!.getTileCentralPosition();
-
+        const summoner: Summoner = new Summoner(tile!.getTileCentralPosition(), texture, tile!);
+        //summoner.position = tile!.getTileCentralPosition();
+        
+        this.summoner = summoner;
         this.addChild(summoner);
+        Battle.setCurrentMap(this);
     }
 
     
     //TODO  MOVE TO THE CAMERA CLASS AND MOVE ONLY TROUGHT TARGET POSITION (OR STORE HERE THESE FUNCTIONS?)
     private cameraInput(delta: number) {
-        if (InputManager.state.get('ArrowRight')) {
-          this.cameraPos.x += 4 * delta;
-        } else if (InputManager.state.get('ArrowLeft')) {
-          this.cameraPos.x -= 4 * delta;
-        } else if (InputManager.state.get('ArrowUp')) {
-          this.cameraPos.y -= 4 * delta;
-        } else if (InputManager.state.get('ArrowDown')) {
-          this.cameraPos.y += 4 * delta;
+        if (Input.state.get('ArrowRight')) {
+          this.cameraPos.x += 200 * delta;
+        } else if (Input.state.get('ArrowLeft')) {
+          this.cameraPos.x -= 200 * delta;
+        } else if (Input.state.get('ArrowUp')) {
+          this.cameraPos.y -= 200 * delta;
+        } else if (Input.state.get('ArrowDown')) {
+          this.cameraPos.y += 200 * delta;
         }
         this.cameraPos.normalize();
 
         Game.setCameraPosition(this.cameraPos.x, this.cameraPos.y);
     }
       
-    public update(delta: number) : void {
-        this.stats.begin()
-
-        this.cameraInput(delta);
-        this.camera.update(delta);
-        //TODO store the units(Monster and summoners) separately of the tiles to update here (check if in the future the tiles need to update too) 
-        this.checkVisibleEntities();
-
-        this.stats.end();
-    }
-
+   
 
     private checkVisibleEntities() :void {
         if (this.children) {
@@ -124,4 +125,36 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
         }
         this.sortChildren();
     }
+
+    public update(delta: number) : void {
+        this.stats.begin()
+
+        this.cameraInput(delta);
+        this.camera.update(delta);
+        //TODO store the units(Monster and summoners) separately of the tiles to update here (check if in the future the tiles need to update too)
+        this.checkVisibleEntities();
+
+        this.summoner.update(delta);
+        this.updateBattleStates(delta);
+
+        this.stats.end();
+    }
+
+    private updateBattleStates(delta: number): void{
+        switch (Battle.state) {
+            case  BATTLESTATES.TOSTART:
+                Battle.state = BATTLESTATES.TURN;
+                break;
+            case BATTLESTATES.WON:
+                
+                break;
+            
+            case BATTLESTATES.DEFEAT:
+                break;
+            
+            default:
+                break;
+        }
+    }
+
 }

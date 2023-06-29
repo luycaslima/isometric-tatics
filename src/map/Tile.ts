@@ -1,5 +1,6 @@
 import { Container, Point, Sprite, Texture } from "pixi.js";
 import { IScene, ITile, SpriteSize, TileType, Vector3 } from "../core/Interfaces";
+import { Battle } from "../core/Battle";
 
 
 export class Tile extends Container implements IScene, ITile{
@@ -12,7 +13,7 @@ export class Tile extends Container implements IScene, ITile{
 
     private sprite: Sprite;
     private tileSize: SpriteSize;
-
+    private centerPoint: Sprite;
 
     //A* pathfinding
     private _h: number = 0;
@@ -23,6 +24,7 @@ export class Tile extends Container implements IScene, ITile{
     private connection?: Tile; //Tile with the shortest path to the goal 
     // Array of neighbors tiles (the tile can have max 4) no diagonal movement
     neighbours: [Vector3 | undefined, Vector3 | undefined, Vector3 | undefined, Vector3 | undefined]; //Up, left, down, right
+
 
     //Has to have undefined because the connection is nullable 
     public get getConnection(): Tile | undefined {
@@ -35,15 +37,15 @@ export class Tile extends Container implements IScene, ITile{
     public get g(): number {
         return this._g;
     }
-    public set setG(value: number) {
-        this._g = value;
+    public set setG(g: number) {
+        this._g = g;
     }
 
     public get h(): number {
         return this._h;
     }
-    public set setH(value: number) {
-        this._h = value;
+    public set setH(h: number) {
+        this._h = h;
     }
 
     public get f(): number {
@@ -76,24 +78,41 @@ export class Tile extends Container implements IScene, ITile{
         this.tilesetTile = tileData.tilesetTile;
         //Not useful in the moment
         this.tileType = tileData.tileType;
-    
-
+        
         this.position.x = this.isoPosition.x;
         this.position.y = this.isoPosition.y;
+
+        //TODO WEIRD BEHAVIOUR WHEN CLICKING TILES. it calls other near tiles not the one i click sometimes
 
         //EVENTS MODES
         this.sprite.eventMode = 'static';
         this.sprite.on('pointerdown', this.getGridPosition.bind(this)); // Para que o eventolistener pegue o this do objeto n do window
-       
-        //TODO Evente call puxa mto desempenho
+
         //TODO ao mouse sair da tela o tile buga e sobe infinitamente
         //this.sprite.onmouseover = this.hoverTile.bind(this);
         //this.sprite.onmouseout = this.outTile.bind(this);
-
+        
         this.addChild(this.sprite);
+        
+        this.centerPoint = Sprite.from('tiles/pivot.png');
+        this.centerPoint.x = this.sprite.position.x;
+        this.centerPoint.y = this.sprite.position.y - this.tileSize.h /3.5;
+        
+
+        this.centerPoint.zIndex = this.zIndex + 1;
+        this.addChild(this.centerPoint);
+        this.centerPoint.renderable = false;
+
+        
+        this.sortChildren();
     }
 
-
+    public getDistance(coords : Vector3) : number {
+        const dist = {x: Math.abs(this.gridPosition.x - coords.x ), y: Math.abs(this.gridPosition.y - coords.y)} as Vector3; 
+        const min = Math.min(dist.x, dist.y);
+        this.centerPoint.renderable = true;
+        return min;
+    }
 /*
     private hoverTile() {
         this.sprite.y = this.sprite.y - 8;
@@ -103,11 +122,10 @@ export class Tile extends Container implements IScene, ITile{
         this.sprite.y = this.sprite.y + 8;
     }
 */
-
+    
     private getGridPosition() {
-        //TODO make a static class that call the function with the data that I pass herer
-        console.log(`x: ${this.gridPosition.x}, y: ${this.gridPosition.y},z: ${this.gridPosition.z}`);
-        //return this.gridPosition;
+        //console.log(`x: ${this.gridPosition.x}, y: ${this.gridPosition.y},z: ${this.gridPosition.z}`);
+        Battle.findPath(this);
     }
 
     public update(_delta: number): void {
@@ -116,7 +134,7 @@ export class Tile extends Container implements IScene, ITile{
 
     //Return the top center of the sprite where the unit will stay
     public getTileCentralPosition(): Point {
-        return {x:(this.tileSize.w /2) + this.position.x , y:(this.tileSize.h /2.5) + this.position.y } as Point;
+        return {x: (this.tileSize.w/2) + this.position.x , y: (this.tileSize.h)/2.5 + this.position.y } as Point;
     }
 
 

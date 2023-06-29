@@ -1,5 +1,5 @@
 import { Assets, Container , Graphics } from "pixi.js";
-import { manifest } from "./Assets";
+import { manifest } from "../Assets";
 import { IScene, ITilemap } from "./Interfaces";
 import { Game } from "../game";
 import { MapScene } from "../map/MapScene";
