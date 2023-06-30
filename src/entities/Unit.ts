@@ -76,7 +76,7 @@ class Unit extends Container implements IScene{
             this.position.x = Math.round((this.position.x + Number.EPSILON) * 100) / 100
             this.position.y = Math.round((this.position.y + Number.EPSILON) * 100) / 100
             
-            console.log(`x: ${this.position.x} y: ${this.position.y}`)
+            //console.log(`x: ${this.position.x} y: ${this.position.y}`)
     
             if (this.targetPosition.x === this.position.x && this.targetPosition.y === this.position.y) {
                 this.currentTile = this.targetTile

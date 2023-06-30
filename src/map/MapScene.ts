@@ -95,8 +95,6 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
         Game.setCameraPosition(this.cameraPos.x, this.cameraPos.y);
     }
       
-   
-
     private checkVisibleEntities() :void {
         if (this.children) {
             for (const c in this.children) {
@@ -105,6 +103,14 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
                 const pos = child.toGlobal(new Point(0, 0));
                 child.renderable = (pos.x > 0 - this.tileSize.w * 2 && pos.y > 0 - this.tileSize.h * 2 && pos.x < Game.rendererWidth + this.tileSize.w
                                     && pos.y < Game.rendererHeight + this.tileSize.h);
+            }
+        }
+    }
+
+    public resetCenterPoingSprite() : void {
+        if (this.getTiles) {
+            for (const tile of this.tiles.values()) {
+                tile.hideCenterPoint();
             }
         }
     }

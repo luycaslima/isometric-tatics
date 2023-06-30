@@ -1,4 +1,4 @@
-import { Container, Point, Sprite, Texture } from "pixi.js";
+import { Container, Point, Polygon, Sprite, Texture } from "pixi.js";
 import { IScene, ITile, SpriteSize, TileType, Vector3 } from "../core/Interfaces";
 import { Battle } from "../core/Battle";
 
@@ -82,23 +82,30 @@ export class Tile extends Container implements IScene, ITile{
         this.position.x = this.isoPosition.x;
         this.position.y = this.isoPosition.y;
 
-        //TODO WEIRD BEHAVIOUR WHEN CLICKING TILES. it calls other near tiles not the one i click sometimes
+        //TODO implement the hit area data on map editor or here?
 
         //EVENTS MODES
+        this.sprite.hitArea = new Polygon([
+            0, 11,
+            23, 0,
+            47, 12,
+            47, 35,
+            24, 47,
+            0, 35,
+        ])
+        
         this.sprite.eventMode = 'static';
         this.sprite.on('pointerdown', this.getGridPosition.bind(this)); // Para que o eventolistener pegue o this do objeto n do window
-
-        //TODO ao mouse sair da tela o tile buga e sobe infinitamente
-        //this.sprite.onmouseover = this.hoverTile.bind(this);
-        //this.sprite.onmouseout = this.outTile.bind(this);
-        
+        this.sprite.on('pointerover', this.hoverTile.bind(this));
+        this.sprite.on('pointerout', this.outTile.bind(this));
         this.addChild(this.sprite);
         
+
+        //Debug square
         this.centerPoint = Sprite.from('tiles/pivot.png');
         this.centerPoint.x = this.sprite.position.x;
         this.centerPoint.y = this.sprite.position.y - this.tileSize.h /3.5;
         
-
         this.centerPoint.zIndex = this.zIndex + 1;
         this.addChild(this.centerPoint);
         this.centerPoint.renderable = false;
@@ -109,23 +116,31 @@ export class Tile extends Container implements IScene, ITile{
 
     public getDistance(coords : Vector3) : number {
         const dist = {x: Math.abs(this.gridPosition.x - coords.x ), y: Math.abs(this.gridPosition.y - coords.y)} as Vector3; 
-        const min = Math.min(dist.x, dist.y);
+        //Why max? For Orthogonal movement
+        //https://www.reddit.com/r/roguelikedev/comments/o8dy9l/calculate_distance_between_2_entities_on_a_tile/
+        const max = Math.max(dist.x, dist.y);
         this.centerPoint.renderable = true;
-        return min;
+        return max;
     }
-/*
+
+    public hideCenterPoint() {
+        this.centerPoint.renderable = false;
+    }
     private hoverTile() {
-        this.sprite.y = this.sprite.y - 8;
+        //this.sprite.y = this.sprite.y - 8;
+        this.sprite.tint =  0x666666;
     }
     
     private outTile() {
-        this.sprite.y = this.sprite.y + 8;
+       // this.sprite.y = this.sprite.y + 8;
+        this.sprite.tint = 0xFFFFFF;
     }
-*/
+
     
     private getGridPosition() {
         //console.log(`x: ${this.gridPosition.x}, y: ${this.gridPosition.y},z: ${this.gridPosition.z}`);
         Battle.findPath(this);
+        //this.sprite.tint = 0x333333;
     }
 
     public update(_delta: number): void {
