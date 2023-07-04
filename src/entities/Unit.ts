@@ -25,7 +25,7 @@ interface IStatus{
 
 //TODO change this to a interface to be implemented
 //Base class for the units (summonner and monster)
-class Unit extends Container implements IScene{
+export class Unit extends Container implements IScene{
     currentTile: Tile;
     
     private lookDirection: Point;
@@ -63,27 +63,27 @@ class Unit extends Container implements IScene{
 
     //TODO refactor to be more readable when scaled up
     public update(delta: number): void{
+        this.move(delta);
+    }
+
+    private move(delta: number) :void {
         if (!this.unitRoute.isEmpty && !this.targetTile) {
             this.targetTile = this.unitRoute.pop();
             this.targetPosition = this.targetTile!.getTileCentralPosition();
-            
-            //console.log(this.unitRoute);
+
         } else if (this.targetTile) {
-            this.position.x = lerp(this.position.x, this.targetPosition.x, delta * 30 );
-            this.position.y = lerp(this.position.y, this.targetPosition.y, delta * 30 );
+            this.position.x = lerp(this.position.x, this.targetPosition.x, delta * .5 );
+            this.position.y = lerp(this.position.y, this.targetPosition.y, delta * .5 );
             
             //To not get stuck near 0
             this.position.x = Math.round((this.position.x + Number.EPSILON) * 100) / 100
             this.position.y = Math.round((this.position.y + Number.EPSILON) * 100) / 100
             
-            //console.log(`x: ${this.position.x} y: ${this.position.y}`)
-    
             if (this.targetPosition.x === this.position.x && this.targetPosition.y === this.position.y) {
                 this.currentTile = this.targetTile
                 this.targetTile = undefined;
             }
         }
-
     }
 }
 

@@ -6,17 +6,17 @@ export interface IScene extends DisplayObject{
 }
 
 export interface ITilemap {
-    tilesetName: string;
-    mapSize: [number, number]; //Number of tiles in the map width x height
-    tileSize: [number, number]; //Size of each tile
-    layers: Array<ILayer>;
+    readonly tilesetName: string;
+    readonly mapSize: [number, number]; //Number of tiles in the map width x height
+    readonly tileSize: [number, number]; //Size of each tile
+    readonly layers: Array<ILayer>;
 }
 
 //TODO transform those decorative layers in one texture?
 export interface ILayer {
-    renderOrder: number;
-    name: string;
-    createdTiles?: Array<ITile>;
+    readonly renderOrder: number;
+    readonly name: string;
+    readonly createdTiles?: Array<ITile>;
 }
 
 //Best to not export a Point from pixi js
@@ -27,7 +27,6 @@ export interface Vector3{
 }
 
 
-
 export interface SpriteSize {
     w: number;
     h: number
@@ -36,10 +35,10 @@ export interface SpriteSize {
 export type TileType = "SPAWNER" | "NORMAL";
 export interface ITile {
     //the position of the tile on the tileset basetexture (size of the grid * tileset size)
-    tilesetTile: [number, number];
-    isoPosition: Vector3;
-    gridPosition: Vector3;
-    depth: number; //depth
-    tileType: TileType; //TODO no purpose in the moment
-    neighbours: [Vector3 | undefined, Vector3 | undefined, Vector3 | undefined, Vector3 | undefined]
+    readonly tilesetTile: [number, number];
+    readonly isoPosition: Vector3;
+    readonly gridPosition: Vector3;
+    readonly depth: number; //depth
+    readonly tileType: TileType; //TODO no purpose in the moment
+    readonly neighbours: [Vector3 | undefined, Vector3 | undefined, Vector3 | undefined, Vector3 | undefined]
 }

@@ -4,22 +4,22 @@ import { Battle } from "../core/Battle";
 
 
 export class Tile extends Container implements IScene, ITile{
-    tilesetTile: [number, number];
-    depth: number;
-    tileType: TileType; 
+    readonly tilesetTile: [number, number];
+    readonly depth: number;
+    readonly tileType: TileType; 
     
-    gridPosition: Vector3;
-    isoPosition: Point;
+    readonly gridPosition: Vector3;
+    readonly isoPosition: Point;
 
     private sprite: Sprite;
     private tileSize: SpriteSize;
     private centerPoint: Sprite;
 
     //A* pathfinding
-    private _h: number = 0;
-    private _g: number = 0;
-    private _f: number = this._h + this._g;
-    private _isWalkable: boolean = false;
+    private h: number = 0;
+    private g: number = 0;
+    private f: number = this.h + this.g;
+    private isWalkable: boolean = false;
     
     private connection?: Tile; //Tile with the shortest path to the goal 
     // Array of neighbors tiles (the tile can have max 4) no diagonal movement
@@ -34,30 +34,30 @@ export class Tile extends Container implements IScene, ITile{
         this.connection = tile;
     }
 
-    public get g(): number {
-        return this._g;
+    public get getG(): number {
+        return this.g;
     }
     public set setG(g: number) {
-        this._g = g;
+        this.g = g;
     }
 
-    public get h(): number {
-        return this._h;
+    public get getH(): number {
+        return this.h;
     }
     public set setH(h: number) {
-        this._h = h;
+        this.h = h;
     }
 
-    public get f(): number {
-        this._f = this._g + this._h;
-        return this._f;
+    public get getF(): number {
+        this.f = this.g + this.h;
+        return this.f;
     }
 
-    public get isWalkable(): boolean{
-        return this._isWalkable;
+    public get getIsWalkable(): boolean{
+        return this.isWalkable;
     }
-    public set isWalkable(value: boolean){
-        this._isWalkable = value;
+    public set setIsWalkable(value: boolean){
+        this.isWalkable = value;
     }
 
     constructor( tileData : ITile, texture: Texture, tileSize : [number,number]) {
@@ -83,8 +83,6 @@ export class Tile extends Container implements IScene, ITile{
         this.position.y = this.isoPosition.y;
 
         //TODO implement the hit area data on map editor or here?
-
-        //EVENTS MODES
         this.sprite.hitArea = new Polygon([
             0, 11,
             23, 0,
@@ -93,7 +91,8 @@ export class Tile extends Container implements IScene, ITile{
             24, 47,
             0, 35,
         ])
-        
+
+        //EVENTS MODES
         this.sprite.eventMode = 'static';
         this.sprite.on('pointerdown', this.getGridPosition.bind(this)); // Para que o eventolistener pegue o this do objeto n do window
         this.sprite.on('pointerover', this.hoverTile.bind(this));
@@ -137,7 +136,8 @@ export class Tile extends Container implements IScene, ITile{
     }
 
     
-    private getGridPosition() {
+    private getGridPosition(e: MouseEvent) {   
+        if (!(e.button.toString() === '0')) return;   //TODO for some reason i cant keep track of button presse from Input here
         //console.log(`x: ${this.gridPosition.x}, y: ${this.gridPosition.y},z: ${this.gridPosition.z}`);
         Battle.findPath(this);
         //this.sprite.tint = 0x333333;

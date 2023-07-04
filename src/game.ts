@@ -1,7 +1,6 @@
-import { Application, BaseTexture, SCALE_MODES,settings } from "pixi.js";
-import Input from "./core/InputManager";
+import { Application, BaseTexture, Container, SCALE_MODES,settings } from "pixi.js";
+import Input from "./core/Input";
 import { IScene } from "./core/Interfaces";
-
 
 
 //Initialize, resize window and change scenes
@@ -23,6 +22,15 @@ export class Game {
         return Game.app.renderer.height;
     }
     
+
+    public static get getCurrentScene(): IScene {
+        return Game.currentScene;
+    }
+
+    public static get getAppStage(): Container{
+        return Game.app.stage;
+    }
+
     public static setCameraPosition(x: number, y: number): void { 
         Game.app.stage.pivot.x = x;
         Game.app.stage.pivot.y = y;
@@ -48,14 +56,13 @@ export class Game {
         BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST;
         settings.ROUND_PIXELS = true; //sharper imgs but movement can appear less smooth 
 
-        //TODO Set scale with the RESIZE OF THE CANVAS
-        //Game.app.stage.scale.set(2);
         Game.resizeScreenHandler();
         window.addEventListener('resize', Game.resizeScreenHandler, false);
         
         //Add ticker
         Game.app.ticker.add(Game.update);
     }
+    
     private static resizeScreenHandler(): void{
         const scaleFactor = Math.min(
             window.innerWidth / Game._width,
@@ -84,8 +91,9 @@ export class Game {
     }
 
     private static update(delta: number): void {
+        Input.update(delta);
         if (Game.currentScene) {
-            Game.currentScene.update(Game.app.ticker.elapsedMS  /1000);
+            Game.currentScene.update(delta);
         }
     }
 

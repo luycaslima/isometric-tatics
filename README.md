@@ -28,7 +28,7 @@ The ideias listed here in the moment is just for the concept.
 
 - [x] Create my own tilemap editor
 
-- [ ] Implement the A* algorithm
+- [x] Implement the A* algorithm
 
 - [ ] Implement Socket io for the connection
 
@@ -63,17 +63,17 @@ The ideias listed here in the moment is just for the concept.
     - [ ] Give a max size or full document screen?
     - [x] Maintain the proportion to screen
 
-- [ ] A* path algorithm used by the BattleManager
+- [x] A* path algorithm used by the BattleManager
 
-- [ ] Camera
+- [ ] "Camera"
   
   - [x] render only the visibile entities ( On map scene class)
   
-  - [ ] movement
+  - [ ] movement 
     
-    - [ ] move to target entity
-    - [ ] mouse Zoom in/out
-    - [ ] Mouse Drag
+    - [ ] move to target entity ( On the MapScene Class)
+    - [x] mouse Zoom in/out (Input)
+    - [x] Mouse Drag (Input)
     - [x] (debug mode on arrows)
 
 - [ ] Player Units
@@ -116,6 +116,8 @@ The ideias listed here in the moment is just for the concept.
 - [ ] Battle Manager
   
   - [ ] Turns
+  
+  - [ ] Queue of Action
   
   - [ ] Battle States
   

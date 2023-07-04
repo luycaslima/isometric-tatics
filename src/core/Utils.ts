@@ -2,7 +2,6 @@ export function lerp(from: number, to: number, t: number): number{
     return from + t * (to - from)  ;
 }
 
-
 //FIRST IN LAST OUT
 export class Stack<T>  {
     private storage: T[] = [];
