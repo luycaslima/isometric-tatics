@@ -1,19 +1,20 @@
 import { Container, Point, Polygon, Sprite, Texture } from "pixi.js";
 import { IScene, ITile, SpriteSize, TileType, Vector3 } from "../core/Interfaces";
 import { Battle } from "../core/Battle";
+import { roundPosition } from "../core/Utils";
 
 
 export class Tile extends Container implements IScene, ITile{
-    readonly tilesetTile: [number, number];
-    readonly depth: number;
-    readonly tileType: TileType; 
+    public readonly tilesetTile: [number, number];
+    public readonly depth: number;
+    public readonly tileType: TileType; 
     
-    readonly gridPosition: Vector3;
-    readonly isoPosition: Point;
+    public readonly gridPosition: Vector3;
+    public readonly isoPosition: Point;
 
     private sprite: Sprite;
     private tileSize: SpriteSize;
-    private centerPoint: Sprite;
+    public centerPoint: Sprite;
 
     //A* pathfinding
     private h: number = 0;
@@ -23,7 +24,7 @@ export class Tile extends Container implements IScene, ITile{
     
     private connection?: Tile; //Tile with the shortest path to the goal 
     // Array of neighbors tiles (the tile can have max 4) no diagonal movement
-    neighbours: [Vector3 | undefined, Vector3 | undefined, Vector3 | undefined, Vector3 | undefined]; //Up, left, down, right
+    public readonly neighbours: [Vector3 | undefined, Vector3 | undefined, Vector3 | undefined, Vector3 | undefined]; //Up, left, down, right
 
 
     //Has to have undefined because the connection is nullable 
@@ -74,13 +75,14 @@ export class Tile extends Container implements IScene, ITile{
 
         this.tileSize = { w: tileSize[0], h: tileSize[1] } as SpriteSize;
 
+        this.pivot.set(0.5,0.5)
         //Not useful here anymore
         this.tilesetTile = tileData.tilesetTile;
         //Not useful in the moment
         this.tileType = tileData.tileType;
         
-        this.position.x = this.isoPosition.x;
-        this.position.y = this.isoPosition.y;
+        this.position.x = this.isoPosition.x 
+        this.position.y = this.isoPosition.y
 
         //TODO implement the hit area data on map editor or here?
         this.sprite.hitArea = new Polygon([
@@ -118,7 +120,7 @@ export class Tile extends Container implements IScene, ITile{
         //Why max? For Orthogonal movement
         //https://www.reddit.com/r/roguelikedev/comments/o8dy9l/calculate_distance_between_2_entities_on_a_tile/
         const max = Math.max(dist.x, dist.y);
-        this.centerPoint.renderable = true;
+        //this.centerPoint.renderable = true;
         return max;
     }
 
@@ -149,7 +151,8 @@ export class Tile extends Container implements IScene, ITile{
 
     //Return the top center of the sprite where the unit will stay
     public getTileCentralPosition(): Point {
-        return {x: (this.tileSize.w/2) + this.position.x , y: (this.tileSize.h)/2.5 + this.position.y } as Point;
+        const pos = {x: (this.tileSize.w/2) + this.position.x , y: (this.tileSize.h)/2.5 + this.position.y } as Point;
+        return roundPosition(pos);
     }
 
 

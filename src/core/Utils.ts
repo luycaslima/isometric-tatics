@@ -1,6 +1,14 @@
+import { Point } from "pixi.js";
+import { Vector3 } from "./Interfaces";
+
 export function lerp(from: number, to: number, t: number): number{
     return from + t * (to - from)  ;
 }
+
+export function roundPosition(pos: Vector3) : Point {
+  return new Point(Math.round((pos.x + Number.EPSILON) * 100) / 100 , Math.round((pos.y + Number.EPSILON) * 100) / 100);
+}
+
 
 //FIRST IN LAST OUT
 export class Stack<T>  {

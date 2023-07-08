@@ -1,5 +1,5 @@
 
-import { Summoner, Unit } from "../entities/Unit";
+import { Unit } from "../entities/Unit";
 import { MapScene } from "../map/MapScene";
 import { Tile } from "../map/Tile";
 import { Queue, Stack } from "./Utils";
@@ -39,34 +39,37 @@ export class Battle {
         Battle.currentMap = map;
         Battle.queueOfUnitsToAct = new Queue<Unit>;
         Battle.setQueueOfUnits();
+        
     };
 
     private static setQueueOfUnits() {
         if (!Battle.currentMap) return;
         Battle.queueOfUnitsToAct.enqueue(Battle.currentMap.getPlayerSummoner)
-        Battle.queueOfUnitsToAct.enqueue(Battle.currentMap.getAdversarySummoner)
+        //Battle.queueOfUnitsToAct.enqueue(Battle.currentMap.getAdversarySummoner)
     }
 
-    //TODO works but refactor it . implement in a typescript way
+    public static sortEntities() {
+            Battle.currentMap?.sortChildren();
+    }
+
+    //TODO works but refactor it . implement in a typescript way (Some edge cases cant find the route)
     public static findPath(target: Tile): void {
-        Battle.currentMap?.resetCenterPoingSprite(); //Debug route
-
-        const currentUnit = Battle.queueOfUnitsToAct.peek(); //Peek because it only dequeue when end its turn
-
         if (Battle.state !== BATTLESTATES.TURN || !Battle.currentMap) return;
+        Battle.currentMap.resetCenterPoingSprite(); //Debug route
+        
+        const currentUnit = Battle.queueOfUnitsToAct.peek(); //Peek because it only dequeue when end its turn
+        
+        //Battle.currentMap.setCameraTarget({ x: currentUnit.position.x, y: currentUnit.position.y } as Vector3);
+
         const start: Tile = currentUnit.currentTile; 
         if (target.gridPosition.x === start.gridPosition.x && target.gridPosition.y === start.gridPosition.y) return;
-
-       /* console.log(`H:${start.getDistance(target.gridPosition)} \n
-            O x: ${start.gridPosition.x} ,O y: ${start.gridPosition.y} \n
-            T x: ${target.gridPosition.x} , T O y: ${target.gridPosition.y}
-        `)*/
 
 
         let toSearch: Tile[] = [start];
         const processed: Tile[] = []; //TODO Create a Map? to check if was processed
 
         while (toSearch.length > 0) {
+           
             let current: Tile = toSearch[0];
 
             //TODO use binary search or heap for better perfomance (its O(4n) here i think)
@@ -81,14 +84,17 @@ export class Battle {
             //toSearch = toSearch.splice(index, 1);
             toSearch.shift(); //not the best to remove from , but it works
 
+            console.log(`searched: ${toSearch} \n processed ${processed}`  );
 
             //Route founded
             if (current === target) {
+                console.log('acho')
                 let currentPathTile: Tile = target;
                 const path: Stack<Tile> = new Stack<Tile>();
 
                 let count = 100;
                 while (currentPathTile !== start) {
+                    currentPathTile.centerPoint.renderable = true;
                     path.push(currentPathTile);
                     currentPathTile = currentPathTile.getConnection!;
 

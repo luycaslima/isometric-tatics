@@ -1,7 +1,8 @@
 import { Container, Point, Sprite, Texture } from "pixi.js";
 import { IScene, Vector3 } from "../core/Interfaces";
 import { Tile } from "../map/Tile";
-import { Stack , lerp } from "../core/Utils";
+import { Stack , lerp, roundPosition } from "../core/Utils";
+import { Battle } from "../core/Battle";
 
 /*
 const ELEMENTS = {
@@ -50,6 +51,7 @@ export class Unit extends Container implements IScene{
         this.targetPosition = {x: 0 , y: 0 } as Vector3
 
         this.currentTile = currentTile;
+        this.zIndex = currentTile.zIndex + 1;
         this.position.x = pos.x;
         this.position.y = pos.y;
         this.unitRoute = new Stack<Tile>();
@@ -64,24 +66,35 @@ export class Unit extends Container implements IScene{
     //TODO refactor to be more readable when scaled up
     public update(delta: number): void{
         this.move(delta);
+        this.animate();
+    }
+    
+    private animate(): void{
+
     }
 
     private move(delta: number) :void {
         if (!this.unitRoute.isEmpty && !this.targetTile) {
             this.targetTile = this.unitRoute.pop();
             this.targetPosition = this.targetTile!.getTileCentralPosition();
+            this.zIndex = this.targetTile!.zIndex + 1; //lerp from the current to the target
+            Battle.sortEntities();
 
         } else if (this.targetTile) {
             this.position.x = lerp(this.position.x, this.targetPosition.x, delta * .5 );
             this.position.y = lerp(this.position.y, this.targetPosition.y, delta * .5 );
             
+            /*console.log(`${this.position.x} , ${this.position.y}
+                ${this.targetPosition.x}, ${this.targetPosition.y}
+            `)*/
+            
             //To not get stuck near 0
-            this.position.x = Math.round((this.position.x + Number.EPSILON) * 100) / 100
-            this.position.y = Math.round((this.position.y + Number.EPSILON) * 100) / 100
+            this.position = roundPosition(this.position);
             
             if (this.targetPosition.x === this.position.x && this.targetPosition.y === this.position.y) {
                 this.currentTile = this.targetTile
                 this.targetTile = undefined;
+                
             }
         }
     }

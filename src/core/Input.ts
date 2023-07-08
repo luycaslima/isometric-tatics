@@ -60,7 +60,7 @@ export default class Input {
             y: (worldPos.y) * newScale.y + stage.y
         };
 
-        stage.x -= (newScreenPos.x-x) ;
+        stage.x -= (newScreenPos.x - x) ;
         stage.y -= (newScreenPos.y - y);
         
         stage.scale.x = newScale.x;

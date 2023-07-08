@@ -65,7 +65,8 @@ export class SceneLoader extends Container implements IScene{
         //this.removeChild(this.loaderBar);
         const tilemap: ITilemap = Assets.get('mGrassField'); 
         //console.log(tilemap as ITilemap) ;
-        Game.changeScene(new MapScene(tilemap));
+        const map = new MapScene(tilemap)
+        Game.changeScene(map);
         this.destroy();
     }
 

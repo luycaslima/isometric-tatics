@@ -31,11 +31,6 @@ export class Game {
         return Game.app.stage;
     }
 
-    public static setCameraPosition(x: number, y: number): void { 
-        Game.app.stage.pivot.x = x;
-        Game.app.stage.pivot.y = y;
-    }
-
 
     public static initialize(width : number, height : number, backgroundColor : number) : void {
         Game._width = width;
@@ -54,10 +49,11 @@ export class Game {
         
         //Pixel art style
         BaseTexture.defaultOptions.scaleMode = SCALE_MODES.NEAREST;
-        settings.ROUND_PIXELS = true; //sharper imgs but movement can appear less smooth 
+        settings.ROUND_PIXELS = true; //sharper imgs but movement can appear less smooth
 
-        Game.resizeScreenHandler();
-        window.addEventListener('resize', Game.resizeScreenHandler, false);
+        //TODO when resize not focus on the center
+       // Game.resizeScreenHandler(); 
+        //window.addEventListener('resize', Game.resizeScreenHandler, false);
         
         //Add ticker
         Game.app.ticker.add(Game.update);
@@ -76,6 +72,7 @@ export class Game {
         Game.app.renderer.view.style!.width = `${newSize[0]}px`;
         Game.app.renderer.view.style!.height = `${newSize[1]}px`;
 
+     
         Game.app.renderer.resize(newSize[0], newSize[1]);
         Game.app.stage.scale.set(scaleFactor);
     }
@@ -86,8 +83,12 @@ export class Game {
             Game.currentScene.destroy();
         }
 
+        newScene.position.x = Game.app.screen.width / 2;
+        newScene.position.y = Game.app.screen.height / 2;
+
         Game.currentScene = newScene;
-        Game.app.stage.addChild(newScene);
+        Game.app.stage.addChild(Game.currentScene);
+        
     }
 
     private static update(delta: number): void {

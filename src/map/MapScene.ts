@@ -1,11 +1,12 @@
-import { BaseTexture, Container, DisplayObject, Point, Rectangle, Texture } from "pixi.js";
+import { BaseTexture, Container, DisplayObject, Point, Rectangle, Sprite, Texture } from "pixi.js";
 import { Game } from "../game";
 import { Tile } from "./Tile";
 import '@pixi/math-extras';
 import Stats from "stats.js";
-import { Monster, Summoner } from "../entities/Unit";
-import { IScene, ITile, ITilemap, SpriteSize } from "../core/Interfaces";
+import { Monster, Summoner, Unit } from "../entities/Unit";
+import { IScene, ITile, ITilemap, SpriteSize, Vector3 } from "../core/Interfaces";
 import { Battle,BATTLESTATES } from "../core/Battle";
+import { lerp } from "../core/Utils";
 
 
 /**
@@ -30,9 +31,13 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
 
     private playerUnits: Array<Monster>;
     private adversaryUnits: Array<Monster>;
+
+    private targetOfCamera?: Vector3;
+
     //Tiles
     //ao ser construido passar pro battle manager 
     private tiles: Map<string,Tile> = new Map();
+    
     
     // STATS FOR PERFOMANCE DEBUGING   
     private stats: Stats = new Stats();
@@ -57,18 +62,18 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
 
         this.baseTexture = BaseTexture.from(`${tilemap.tilesetName}`);
         
-        //TODO understand the origin to always center
-        this.x = Game.rendererWidth / 6;
-        this.y = -Game.rendererHeight / 6;
+        //const spr = Sprite.from('tiles/block.png');
+        this.pivot.set(tilemap.tileSize[0] * 0.5,tilemap.tileSize[1] * 0.5)
+        //this.addChild(spr);
         
         this.generateMap(tilemap);
-
+        
         //Under here load both summoners and make a cutscene
         this.playerUnits = [];
         this.adversaryUnits = [];
 
         //TODO For debug Spawn Summoner Spawn in the correct position in each map.  
-        let tile = this.tiles.get("13,11");
+        let tile = this.tiles.get("10,11");
         const texture: Texture = Texture.from('/sprites/placeholder_nonanimated.png');
         const summoner: Summoner = new Summoner(tile!.getTileCentralPosition(), texture, tile!);
         
@@ -77,10 +82,38 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
 
         this.playerSummoner = summoner;
         this.adversarySummoner = summoner2;
+        this.adversarySummoner.renderable = false;
 
         this.addChild(this.adversarySummoner)
         this.addChild(this.playerSummoner);
         Battle.setCurrentMap(this);
+    }
+    
+    public setCameraTarget(target: Vector3): void{
+        this.targetOfCamera = target
+    }
+    private moveCameraToTarget(delta: number): void{
+        //TODO Smooth position
+        /*if (this.targetOfCamera) {
+            Game.getAppStage.pivot.x = lerp(Game.getAppStage.pivot.x, this.targetOfCamera.x, delta * .5);
+            Game.getAppStage.pivot.y = lerp(Game.getAppStage.pivot.x, this.targetOfCamera.y, delta * .5);
+
+            Game.getAppStage.pivot.x = Math.round((Game.getAppStage.pivot.x + Number.EPSILON) * 100) / 100;
+            Game.getAppStage.pivot.y = Math.round((Game.getAppStage.pivot.y + Number.EPSILON) * 100) / 100;
+           
+            console.log(`${this.targetOfCamera.y} ${Game.getAppStage.pivot.y}`)
+            if (Game.getAppStage.pivot.x === this.targetOfCamera.x && Game.getAppStage.pivot.y === this.targetOfCamera.y) {
+                this.targetOfCamera = undefined;
+            }
+ 
+        }*/
+        const stage = Game.getCurrentScene;
+        if (this.targetOfCamera) {
+            stage.pivot.x = this.targetOfCamera.x
+            stage.pivot.y = this.targetOfCamera.y
+            //stage.position.x = Game.rendererWidth/2;
+            //stage.position.y = Game.rendererHeight/2;
+        }
     }
 
     /*
@@ -102,17 +135,16 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
       
     private checkVisibleEntities() :void {
         if (this.children) {
-            for (const c in this.children) {
-                
+            for (const c in this.children) {  
                 const child : DisplayObject = this.children[c];
                 const pos = child.toGlobal(new Point(0, 0));
-                child.renderable = (pos.x > 0 - this.tileSize.w * 2 && pos.y > 0 - this.tileSize.h * 2 && pos.x < Game.rendererWidth + this.tileSize.w
+                child.renderable = (pos.x > 0 + (-this.tileSize.w * 4 ) && pos.y > 0 +(-this.tileSize.h * 4) && pos.x < Game.rendererWidth + this.tileSize.w
                                     && pos.y < Game.rendererHeight + this.tileSize.h);
             }
         }
     }
 
-    public resetCenterPoingSprite() : void {
+    public resetCenterPoingSprite(): void {
         if (this.getTiles) {
             for (const tile of this.tiles.values()) {
                 tile.hideCenterPoint();
@@ -130,7 +162,7 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
             const texture = new Texture(this.baseTexture, rect);
             
             const tile = new Tile(tileData, texture, tilemap.tileSize);
-                
+        
             this.tiles.set(`${tileData.gridPosition.x},${tileData.gridPosition.y}`, tile);
             this.addChild(tile);
         }
@@ -142,7 +174,8 @@ export class MapScene extends Container implements IScene/*, ITilemap*/{
 
         //this.cameraInput(delta);
         this.checkVisibleEntities();
-
+        
+        this.moveCameraToTarget(delta);
         this.updateEntities(delta);
         this.updateBattleStates(delta);
 
